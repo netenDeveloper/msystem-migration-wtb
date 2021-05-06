@@ -1,4 +1,16 @@
 ---
+- name: set /etc/selinux/config 
+  template: 
+    src: "config" 
+    dest: "/etc/selinux"
+    owner: root
+
+- name: reboot
+  reboot:
+
+- name: ftpd_full_access
+  shell: setsebool -P ftpd_full_access on
+
 - name: set timezone to Asia/Tokyo
   timezone:
     name: Asia/Tokyo
@@ -63,18 +75,6 @@
     src: "pure-ftpd.conf" 
     dest: "/etc/pure-ftpd"
     owner: root
-
-- name: set /etc/selinux/config 
-  template: 
-    src: "config" 
-    dest: "/etc/selinux"
-    owner: root
-
-- name: reboot
-  reboot:
-
-- name: ftpd_full_access
-  shell: setsebool -P ftpd_full_access on
   
 - name: backUp rsyslog.conf
   shell: cp /etc/rsyslog.conf /etc/rsyslog-backup.conf
