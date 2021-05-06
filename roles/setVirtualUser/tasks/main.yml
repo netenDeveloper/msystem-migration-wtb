@@ -1,0 +1,17 @@
+---
+- name: user directory
+  shell: mkdir /home/ftp/pub/{{username}}
+
+- name: make user
+  shell: ( echo {{password}} ; echo {{password}} ) | pure-pw useradd {{username}} -u ftpUser -d /home/ftp/pub/{{username}}
+
+- name: make user
+  shell: pure-pw mkdb
+
+- name: make user
+  shell: pure-pw mkdb
+
+- name: restart pure-ftpd
+  systemd:
+    name: pure-ftpd
+    state: restarted

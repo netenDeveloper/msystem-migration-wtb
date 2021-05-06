@@ -1,0 +1,7 @@
+
+- name: setVirtualUser 
+  hosts: all 
+  remote_user: "{{user}}"
+  become: yes
+  roles:
+    - setVirtualUser

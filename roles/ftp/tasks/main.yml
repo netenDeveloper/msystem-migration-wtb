@@ -1,0 +1,63 @@
+---
+- name: Add the user 'ftpUser' a primary group of 'ftpGroup'
+  user:
+    name: ftpUser
+    password: "{{ 'ftpUser' | password_hash('sha512') }}"  
+    group: ftpGroup
+
+- name: install the latest version of pure-ftpd from epel
+  yum:
+    name: pure-ftpd
+    enablerepo: epel
+    state: present
+
+- name: backUp pure-ftpd.conf
+  shell: cp /etc/pure-ftpd/pure-ftpd.conf /etc/pure-ftpd/pure-ftpd-backup.conf
+
+- name: set pure-ftpd.conf 
+  template: 
+    src: "pure-ftpd.conf" 
+    dest: "/etc/pure-ftpd"
+    owner: root
+  
+- name: backUp rsyslog.conf
+  shell: cp /etc/rsyslog.conf /etc/rsyslog-backup.conf
+
+- name: set /etc/rsyslog.conf 
+  template: 
+    src: "rsyslog.conf" 
+    dest: "/etc"
+    owner: root
+
+- name: restart rsyslog
+  systemd:
+    name: rsyslog
+    state: restarted
+
+- name: set /etc/rsyslog.conf 
+  template: 
+    src: "certs/pure-ftpd.pem" 
+    dest: "/etc/pki/tls/certs"
+    owner: root
+
+- name: chmod 600
+  ansible.builtin.file:
+    path: /etc/pki/tls/certs/pure-ftpd.pem
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: start pure-ftpd
+  systemd:
+    name: pure-ftpd
+    state: started
+    enabled: yes
+
+- name: ftp directory
+  shell: mkdir /home/ftp;  mkdir /home/ftp/pub
+
+- name: chmod ftpUser
+  ansible.builtin.file:
+    path: /home/ftp/pub/
+    owner: ftpUser
+    group: ftpGroup
