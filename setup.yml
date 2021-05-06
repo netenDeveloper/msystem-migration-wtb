@@ -1,0 +1,7 @@
+
+- name: setup 
+  hosts: all 
+  remote_user: "{{user}}"
+  become: yes
+  roles:
+    - setup
