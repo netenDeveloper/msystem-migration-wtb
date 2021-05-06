@@ -15,8 +15,10 @@
   timezone:
     name: Asia/Tokyo
 
-- name: upgrade packages
-  shell: yum update -y
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
 
 - name: install yum-cron
   yum: 
@@ -52,7 +54,7 @@
 - name: Add the user 'ftpUser' a primary group of 'admin'
   user:
     name: ftpUser
-    password: ftpUser  
+    password: "{{ 'ftpUser' | password_hash('sha512') }}"  
     group: ftpGroup
 
 

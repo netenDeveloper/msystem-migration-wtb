@@ -15,8 +15,10 @@
   timezone:
     name: Asia/Tokyo
 
-- name: upgrade packages
-  shell: yum update -y
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
 
 - name: install yum-cron
   yum: 
@@ -49,10 +51,10 @@
   group:
     name: ftpGroup
 
-- name: Add the user 'ftpUser' a primary group of 'admin'
+- name: Add the user 'ftpUser' with group 'ftpGroup'
   user:
     name: ftpUser
-    password: ftpUser  
+    password: "{{ 'ftpUser' | password_hash('sha512') }}"
     group: ftpGroup
 
 - name: Install epel-release
