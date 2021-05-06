@@ -26,6 +26,12 @@
     name: yum-cron
     state: started
 
+- name: replace in sql files
+  shell: localectl set-locale LANG=ja_JP.utf8
+
+- name: replace in sql files
+  shell: localectl set-keymap us
+
 - name: Ensure group "ftpGroup" exists
   group:
     name: ftpGroup
@@ -36,6 +42,14 @@
     password: ftpUser  
     group: ftpGroup
 
-- name: SELINUX enforcing
-  shell: sed -i -e 's/SELINUX=disabled/SELINUX=enforcing/g' /etc/selinux/config
+- name: Install epel-release
+  shell: amazon-linux-extras install epel -y
 
+- name: install the latest version of pure-ftpd from epel
+  yum:
+    name: pure-ftpd
+    enablerepo: epel
+    state: present
+
+- name: backUp pure-ftpd.conf
+  shell: cp /etc/pure-ftpd/pure-ftpd.conf /etc/pure-ftpd/pure-ftpd-backup.conf

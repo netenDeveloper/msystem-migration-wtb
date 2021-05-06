@@ -3,10 +3,8 @@
   timezone:
     name: Asia/Tokyo
 
-- name: upgrade all packages
-  yum:
-    name: '*'
-    state: latest
+- name: upgrade packages
+  shell: yum update -y
 
 - name: install yum-cron
   yum: 
