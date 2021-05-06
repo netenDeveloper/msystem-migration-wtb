@@ -1,0 +1,9 @@
+- hosts: ta
+  remote_user: centos
+
+  tasks: 
+  - name: update packages
+    yum: 
+      name: '*'
+      state: latest
+
