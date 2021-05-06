@@ -16,18 +16,21 @@
     name: yum-cron
     enabled: yes
 
-- name: replace in sql files
-  shell: sed -i "s/^apply_updates.*$/apply_updates = yes/g" /etc/yum/yum-cron.conf
+- name: set yum-cron 
+  template: 
+    src: "yum-cron.conf" 
+    dest: "/etc/yum"
+    owner: root
 
 - name: start yum-cron
   systemd:
     name: yum-cron
     state: started
 
-- name: replace in sql files
+- name: localectl LANG=ja_JP.utf8
   shell: localectl set-locale LANG=ja_JP.utf8
 
-- name: replace in sql files
+- name: localectl set-keymap us
   shell: localectl set-keymap us
 
 - name: Ensure group "ftpGroup" exists
@@ -54,3 +57,50 @@
 
 - name: backUp pure-ftpd.conf
   shell: cp /etc/pure-ftpd/pure-ftpd.conf /etc/pure-ftpd/pure-ftpd-backup.conf
+
+- name: set pure-ftpd.conf 
+  template: 
+    src: "pure-ftpd.conf" 
+    dest: "/etc/pure-ftpd"
+    owner: root
+
+- name: set /etc/selinux/config 
+  template: 
+    src: "config" 
+    dest: "/etc/selinux"
+    owner: root
+
+- name: reboot
+  reboot:
+
+- name: ftpd_full_access
+  shell: setsebool -P ftpd_full_access on
+  
+- name: backUp rsyslog.conf
+  shell: cp /etc/rsyslog.conf /etc/rsyslog-backup.conf
+
+- name: set /etc/rsyslog.conf 
+  template: 
+    src: "rsyslog.conf" 
+    dest: "/etc"
+    owner: root
+
+- name: restart rsyslog
+  systemd:
+    name: rsyslog
+    state: restarted
+
+- name: set /etc/rsyslog.conf 
+  template: 
+    src: "certs/pure-ftpd.pem" 
+    dest: "/etc/pki/tls/certs"
+    owner: root
+
+- name: backUp rsyslog.conf
+  shell: chmod 600 /etc/pki/tls/certs/pure-ftpd.pem
+
+- name: start pure-ftpd
+  systemd:
+    name: pure-ftpd
+    state: started
+    enabled: yes
