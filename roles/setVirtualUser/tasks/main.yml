@@ -1,6 +1,9 @@
 ---
-- name: user directory
-  shell: mkdir /home/ftp/pub/{{username}}
+- name: Create user directory if it does not exist
+  ansible.builtin.file:
+    path: /home/ftp/pub/{{username}}
+    state: directory
+    mode: '0755'
 
 - name: make user
   shell: ( echo {{password}} ; echo {{password}} ) | pure-pw useradd {{username}} -u ftpUser -d /home/ftp/pub/{{username}}

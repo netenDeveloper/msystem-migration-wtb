@@ -53,8 +53,11 @@
     state: started
     enabled: yes
 
-- name: ftp directory
-  shell: mkdir /home/ftp;  mkdir /home/ftp/pub
+- name: Create ftp directory if it does not exist
+  ansible.builtin.file:
+    path: /home/ftp/pub
+    state: directory
+    mode: '0755'
 
 - name: chmod ftpUser
   ansible.builtin.file:
