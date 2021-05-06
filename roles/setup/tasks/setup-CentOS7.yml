@@ -1,6 +1,58 @@
 ---
-# This playbook contains common plays that will be run on all nodes.
 - name: set timezone to Asia/Tokyo
   timezone:
     name: Asia/Tokyo
 
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: install yum-cron
+  yum: 
+    name:
+      - yum-cron
+
+- name: enabled yum-cron
+  systemd:
+    name: yum-cron
+    enabled: yes
+
+- name: replace in sql files
+  shell: sed -i "s/^apply_updates.*$/apply_updates = yes/g" /etc/yum/yum-cron.conf
+
+- name: start yum-cron
+  systemd:
+    name: yum-cron
+    state: started
+
+- name: replace in sql files
+  shell: localectl set-locale LANG=ja_JP.utf8
+
+- name: replace in sql files
+  shell: localectl set-keymap us
+
+- name: Ensure group "ftpGroup" exists
+  group:
+    name: ftpGroup
+
+- name: Add the user 'ftpUser' a primary group of 'admin'
+  user:
+    name: ftpUser
+    password: ftpUser  
+    group: ftpGroup
+
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: install the latest version of pure-ftpd from epel
+  yum:
+    name: pure-ftpd
+    enablerepo: epel
+    state: present
+
+- name: backUp pure-ftpd.conf
+  shell: cp /etc/pure-ftpd/pure-ftpd.conf /etc/pure-ftpd/pure-ftpd-backup.conf
