@@ -1,0 +1,5 @@
+
+- name: upload docker file 
+  copy: 
+    src: ../files/{{docker}}
+    dest: /home/{{user}}/

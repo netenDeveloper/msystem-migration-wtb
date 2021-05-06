@@ -1,0 +1,24 @@
+
+- name: Install certbot dependencies
+  yum: 
+    name:
+     - certbot
+     - python2-certbot-nginx 
+    state: present
+  when:
+      - ansible_facts['distribution'] == "CentOS"
+      - ansible_facts['distribution_major_version'] == "7"
+
+- name: set nginx template 
+  template: 
+    src: "{{type}}.conf" 
+    dest: "/etc/nginx/conf.d"
+    owner: nginx
+
+
+- name: rename conf
+  shell: |
+    mv /etc/nginx/conf.d/{{type}}.conf /etc/nginx/conf.d/{{server_name}}.conf
+  become : yes
+
+
