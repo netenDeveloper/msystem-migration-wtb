@@ -14,28 +14,23 @@
     name: '*'
     state: latest
 
-- name: install dev package
+- name: install auto-Update
   yum: 
     name:
-      - tmux
-      # - neovim
-      - git
-      - mariadb
-      - go
+      - yum-cron
 
-- name: install docker 
-  shell: |
-    amazon-linux-extras install docker -y
-    usermod -a -G docker "{{user}}" 
-    amazon-linux-extras install epel -y
-
-- name: install docker-compose
-  shell: |
-    curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-
-- name: Make sure a docker is running
+- name: enabled yum-cron
   systemd:
-    state: started 
+    name: yum-cron
     enabled: yes
-    name: docker 
+
+- name: replace in sql files
+  shell: sed -i "s/^apply_updates.*$/apply_updates = yes/g" /etc/yum/yum-cron.conf
+
+- name: start yum-cron
+  systemd:
+    name: yum-cron
+    state: started
+
+
 
