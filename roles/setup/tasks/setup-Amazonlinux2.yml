@@ -95,8 +95,12 @@
     dest: "/etc/pki/tls/certs"
     owner: root
 
-- name: backUp rsyslog.conf
-  shell: chmod 600 /etc/pki/tls/certs/pure-ftpd.pem
+- name: chmod 600
+  ansible.builtin.file:
+    path: /etc/pki/tls/certs/pure-ftpd.pem
+    owner: root
+    group: root
+    mode: '0600'
 
 - name: start pure-ftpd
   systemd:
